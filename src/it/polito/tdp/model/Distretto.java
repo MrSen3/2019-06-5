@@ -7,12 +7,18 @@ public class Distretto {
 	private int nCrimini;
 	private int anno;
 	private LatLng centroGeografico;
+	private int nAgenti;
 	
 	public Distretto(int id, int nCrimini, int anno, double latitude, double longitude) {
 		this.id=id;
 		this.nCrimini=nCrimini;
 		this.anno=anno;
 		centroGeografico=new LatLng(latitude, longitude);
+	}
+
+	public Distretto(int minValue) {
+		// TODO Auto-generated constructor stub
+		nCrimini=minValue;
 	}
 
 	public int getId() {
@@ -46,7 +52,24 @@ public class Distretto {
 	public void setCentroGeografico(LatLng centroGeografico) {
 		this.centroGeografico = centroGeografico;
 	}
+	
+	
 
+	public int getnAgenti() {
+		return nAgenti;
+	}
+
+	public void setnAgenti(int nAgenti) {
+		this.nAgenti = nAgenti;
+	}
+
+	public void plusnAgenti() {
+		this.nAgenti++;
+	}
+	
+	public void minusnAgenti() {
+		this.nAgenti--;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

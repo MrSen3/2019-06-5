@@ -5,6 +5,8 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -31,10 +33,10 @@ public class CrimesController {
     private ComboBox<AnnoCount> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -70,7 +72,33 @@ public class CrimesController {
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	txtResult.clear();
+    	AnnoCount annoScelto=boxAnno.getValue();
+    	int meseScelto = boxMese.getValue();
+    	int giornoScelto = boxGiorno.getValue();
+    	
+    	if(!model.cercaData(annoScelto.getAnno(), meseScelto, giornoScelto)) {
+    		txtResult.setText("La data selezionata e' errata! Cambia data!\n");
+    	}
+    	try {
+    	Integer nPoliziotti = Integer.parseInt(txtN.getText());
+    	if(nPoliziotti<1 || nPoliziotti>10) {
+    		txtResult.setText("Devi inserire un numero intero compreso tra 1 e 10!\n");
+    		return;
+    	}
+    	
+    	Distretto partenza = model.getDistrettoMenoCriminalita();
+    	
+    	txtResult.appendText("Il distretto con minor criminalita' e': "+partenza.toString());
+    	
+    	model.simula(partenza, nPoliziotti, annoScelto.getAnno(), meseScelto, giornoScelto);
+    	
+    	txtResult.appendText("Il numero di eventi mal gestiti e': "+model.getEventiMalGestiti());
+    	
+    	}catch(NumberFormatException e) {
+    		System.err.println("Errore: conversione da stringa a numero intero di txtN non riuscita!");
+    		return;
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -88,6 +116,7 @@ public class CrimesController {
     public void setModel(Model model) {
     	this.model = model;
     	boxAnno.getItems().addAll(model.getAnni());
-    	
+    	boxMese.getItems().addAll(model.getMesi());
+    	boxGiorno.getItems().addAll(model.getGiorni());
     }
 }

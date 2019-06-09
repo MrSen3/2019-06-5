@@ -1,5 +1,6 @@
 package it.polito.tdp.model;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 import org.jgrapht.*;
@@ -15,13 +16,14 @@ public class Model {
 	EventsDao dao;
 	List<Distretto> distretti;
 	
+	Simulatore sim;
+	
 	public Model(){
 		dao=new EventsDao();
 		
 	}
 
 	public List<AnnoCount> getAnni() {
-		// TODO Auto-generated method stub
 		return dao.getAnni();
 	}
 
@@ -38,21 +40,15 @@ public class Model {
 		//Il peso di ogni arco è dato dalla distanza tra il centro di un ditretto e un altro
 		
 		
-//		for(int i=0, i<grafo.vertexSet().size(), i++) {
-//			for(int j=i+1, j<grafo.vertexSet().size(), j++) {
-//				grafo.vertexSet().
-//			}
 		for(Distretto d: grafo.vertexSet()) {
 			for(Distretto d1: grafo.vertexSet()) {
 				if(!d.equals(d1) && !grafo.containsEdge(d, d1)) {
 					Graphs.addEdge(this.grafo, d, d1, LatLngTool.distance(d.getCentroGeografico(), d1.getCentroGeografico(), LengthUnit.KILOMETER));
-					
 				}
 			}
 		}
+		
 		System.out.println(grafo.edgeSet().size()+" archi aggiunti");
-		
-		
 	
 	}
 	
@@ -104,6 +100,53 @@ public class Model {
 	public List<Distretto> getDistretti() {
 		return distretti;
 	}
+
+	public List<Integer> getMesi() {
+		// TODO Auto-generated method stub
+		List<Integer>result=new ArrayList<Integer>();
+		for(int i=1; i<=12; i++)
+			result.add(i);
+		return result;
+	}
+	
+	public List<Integer> getGiorni() {
+		// TODO Auto-generated method stub
+		List<Integer>result=new ArrayList<Integer>();
+		for(int i=1; i<=31; i++)
+			result.add(i);
+		return result;
+	}
+
+	public boolean cercaData(int annoScelto, int meseScelto, int giornoScelto) {
+		// TODO Auto-generated method stub
+		return dao.cercaData(annoScelto, meseScelto, giornoScelto);
+	}
+
+	public Distretto getDistrettoMenoCriminalita() {
+		// TODO Auto-generated method stub
+		Distretto min = new Distretto(Integer.MIN_VALUE);
+		System.out.println("Il distretto con minor criminalita' e': "+min.toString());
+		for(Distretto d: distretti) {
+			if(d.getnCrimini()>min.getnCrimini())
+				min=d;
+		}
+    	System.out.println("Il distretto con minor criminalita' e': "+min.toString());
+
+		return min;
+	}
 	
 	
+	public void simula(Distretto partenza, int nAgenti, int annoScelto, int meseScelto, int giornoScelto) {
+		sim=new Simulatore();
+		
+		//Al mio simulatore devo passare il nodo di partenza, il nAgentiTotale inserito dall'utente e la data inserita
+		sim.init(grafo, partenza, nAgenti, annoScelto, meseScelto, giornoScelto);
+		
+		sim.run();		
+	}
+
+	public int getEventiMalGestiti() {
+		// TODO Auto-generated method stub
+		return sim.getEventiMalGestiti();
+	}
 }
