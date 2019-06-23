@@ -12,17 +12,19 @@ public class Evento implements Comparable<Evento>{
 	}
 
 	private TipoEvento tipo;
+	private Distretto distrettoEvento;
 	private LocalTime tempoInizio;
 	private LocalTime tempoFine;
 	private Duration durataIntervento;
 	private int idAgente;
 	
-	public Evento(TipoEvento tipo, LocalTime tempoInizio, LocalTime tempoFine, Duration durataIntervento,
+	public Evento(TipoEvento tipo, Distretto distrettoEvento, LocalTime tempoInizio, Duration durataIntervento,
 			int idAgente) {
 		super();
 		this.tipo = tipo;
 		this.tempoInizio = tempoInizio;
-		this.tempoFine = tempoFine;
+		this.distrettoEvento=distrettoEvento;
+		//this.tempoFine = tempoFine;
 		this.durataIntervento = durataIntervento;
 		this.idAgente = idAgente;
 	}
@@ -100,10 +102,35 @@ public class Evento implements Comparable<Evento>{
 
 
 
+	public Distretto getDistrettoEvento() {
+		return distrettoEvento;
+	}
+
+
+
+
+	public void setDistrettoEvento(Distretto distrettoEvento) {
+		this.distrettoEvento = distrettoEvento;
+	}
+
+
+
+
 	@Override
 	public int compareTo(Evento other) {
 		// TODO Auto-generated method stub
 		return this.tempoInizio.compareTo(other.getTempoInizio());
 	}
+
+
+
+
+	@Override
+	public String toString() {
+		return String.format("Evento [tipo=%s, tempoInizio=%s, tempoFine=%s, durataIntervento=%s, idAgente=%s]", tipo,
+				tempoInizio, tempoFine, durataIntervento, idAgente);
+	}
+	
+	
 	
 }

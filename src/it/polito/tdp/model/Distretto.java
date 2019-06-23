@@ -1,5 +1,7 @@
 package it.polito.tdp.model;
 
+import java.util.*;
+
 import com.javadocmd.simplelatlng.LatLng;
 
 public class Distretto {
@@ -7,7 +9,8 @@ public class Distretto {
 	private int nCrimini;
 	private int anno;
 	private LatLng centroGeografico;
-	private int nAgenti;
+	private List<Vicino> vicini;
+	private List<Poliziotto> poliziottiNelDistretto;
 	
 	public Distretto(int id, int nCrimini, int anno, double latitude, double longitude) {
 		this.id=id;
@@ -18,9 +21,10 @@ public class Distretto {
 
 	public Distretto(int minValue) {
 		// TODO Auto-generated constructor stub
-		nCrimini=minValue;
+		this.nCrimini=minValue;
 	}
 
+	
 	public int getId() {
 		return id;
 	}
@@ -52,24 +56,18 @@ public class Distretto {
 	public void setCentroGeografico(LatLng centroGeografico) {
 		this.centroGeografico = centroGeografico;
 	}
+
+	
+	public List<Vicino> getVicini() {
+		return vicini;
+	}
+
+	public void setVicini(List<Vicino> vicini) {
+		this.vicini = vicini;
+	}
 	
 	
 
-	public int getnAgenti() {
-		return nAgenti;
-	}
-
-	public void setnAgenti(int nAgenti) {
-		this.nAgenti = nAgenti;
-	}
-
-	public void plusnAgenti() {
-		this.nAgenti++;
-	}
-	
-	public void minusnAgenti() {
-		this.nAgenti--;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -96,6 +94,50 @@ public class Distretto {
 	public String toString() {
 		return String.format("Distretto [id=%s, nCrimini=%s, anno=%s, centroGeografico=%s]", id, nCrimini, anno,
 				centroGeografico);
+	}
+
+	public void addVicino(Vicino vicino) {
+		// TODO Auto-generated method stub
+		this.vicini.add(vicino);
+		Collections.sort(vicini);
+		
+	}
+
+	public void addAllPoliziotti(List<Poliziotto> listaAgenti) {
+		// TODO Auto-generated method stub
+		poliziottiNelDistretto.addAll(listaAgenti);
+		for(Poliziotto p: poliziottiNelDistretto) {
+		System.out.println(p+"\n");}
+	}
+	public void addPoliziotto(Poliziotto poliziotto) {
+		// TODO Auto-generated method stub
+		poliziottiNelDistretto.add(poliziotto);
+	}
+	public void removePoliziotto() {
+		// TODO Auto-generated method stub
+		poliziottiNelDistretto.remove(0);
+		
+	}
+	
+	public int numPoliziottiNelDistretto() {
+		return poliziottiNelDistretto.size();
+	}
+	
+	public int numPoliziottiDisponibiliNelDistretto() {
+		int count=0;
+		for(Poliziotto p: poliziottiNelDistretto) {
+			if(p.isDisponibile())
+				count++;
+		}
+		return count;
+	}
+	
+	public List<Poliziotto> getPoliziottiNelDistretto() {
+		return poliziottiNelDistretto;
+	}
+
+	public void setPoliziottiNelDistretto(List<Poliziotto> poliziottiNelDistretto) {
+		this.poliziottiNelDistretto = poliziottiNelDistretto;
 	}
 	
 	

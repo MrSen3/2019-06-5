@@ -79,18 +79,30 @@ public class CrimesController {
     	
     	if(!model.cercaData(annoScelto.getAnno(), meseScelto, giornoScelto)) {
     		txtResult.setText("La data selezionata e' errata! Cambia data!\n");
-    	}
-    	try {
-    	Integer nPoliziotti = Integer.parseInt(txtN.getText());
-    	if(nPoliziotti<1 || nPoliziotti>10) {
-    		txtResult.setText("Devi inserire un numero intero compreso tra 1 e 10!\n");
     		return;
     	}
     	
-    	Distretto partenza = model.getDistrettoMenoCriminalita();
+    	if(txtN.getText().isEmpty()) {
+    		txtResult.setText("Casella N vuota! Devi inserire un numero intero di poliziotti compreso tra 1 e 10!\n");
+    	}
     	
+    	
+    	try {
+    	Integer nPoliziotti = Integer.parseInt(txtN.getText());
+    	
+    	if(nPoliziotti<1 || nPoliziotti>10) {
+    		txtResult.setText("Numero N errato! Devi inserire un numero intero compreso tra 1 e 10!\n");
+    		return;
+    	}
+    	
+    	//I poliziotti all'istante 0 devono essere tutti nel distretto con meno criminalita
+    	Distretto partenza = model.getDistrettoMenoCriminalita();
     	txtResult.appendText("Il distretto con minor criminalita' e': "+partenza.toString());
     	
+    	//Per la simulazione servono i dati inseriti dall'utente
+    	//Distretto con meno criminalita
+    	//Numero di poliziotti tot
+    	//Data
     	model.simula(partenza, nPoliziotti, annoScelto.getAnno(), meseScelto, giornoScelto);
     	
     	txtResult.appendText("Il numero di eventi mal gestiti e': "+model.getEventiMalGestiti());

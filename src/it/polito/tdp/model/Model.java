@@ -15,11 +15,14 @@ public class Model {
 	Graph<Distretto, DefaultWeightedEdge>grafo;
 	EventsDao dao;
 	List<Distretto> distretti;
+	Map<Distretto, List<Distretto>> mappaVicini;
+	Map <Integer, Distretto> idMapDistretti;
 	
 	Simulatore sim;
 	
 	public Model(){
 		dao=new EventsDao();
+		idMapDistretti=new HashMap<Integer, Distretto>();
 		
 	}
 
@@ -44,17 +47,37 @@ public class Model {
 			for(Distretto d1: grafo.vertexSet()) {
 				if(!d.equals(d1) && !grafo.containsEdge(d, d1)) {
 					Graphs.addEdge(this.grafo, d, d1, LatLngTool.distance(d.getCentroGeografico(), d1.getCentroGeografico(), LengthUnit.KILOMETER));
+					System.out.println((double)grafo.getEdgeWeight(grafo.getEdge(d, d1)));
 				}
 			}
 		}
 		
 		System.out.println(grafo.edgeSet().size()+" archi aggiunti");
 	
+		
+		//Qui setto la idMapDistretti
+		for(Distretto v: grafo.vertexSet()) {
+			idMapDistretti.put(v.getId(), v);
+			System.out.println(v.getId()+"\n");
+		}
+		
 	}
 	
 	
+	public void setVicini(){
+		for(Distretto v: grafo.vertexSet()) {
+			for(Distretto v1: grafo.vertexSet()) {
+				if(!v.equals(v1)) {
+					DefaultWeightedEdge arco = grafo.getEdge(v, v1);
+					double peso = (double)grafo.getEdgeWeight(arco);
+					v.addVicino(new Vicino(v1, peso));
+				}
+			}
+	}
+	}
+	
 	public Map<Distretto, List<Distretto>> getDistrettiOrdinati(){
-		Map<Distretto, List<Distretto>> mappaVicini = new HashMap<Distretto, List<Distretto>>();
+		mappaVicini = new HashMap<Distretto, List<Distretto>>();
 		
 		for(Distretto v: grafo.vertexSet()) {
 			List<Distretto> vicini=Graphs.neighborListOf(this.grafo, v);
@@ -71,8 +94,11 @@ public class Model {
 			});
 			
 			mappaVicini.put(v, vicini);
-			
+//			v.addVicino(new Vicino());
 		}
+//		setVicini();
+		
+		//Mappa di vicini in cui a ogni distretto corrisponde una lista di distretti
 		return mappaVicini;
 	}
 	
@@ -126,10 +152,12 @@ public class Model {
 		// TODO Auto-generated method stub
 		Distretto min = new Distretto(Integer.MIN_VALUE);
 		System.out.println("Il distretto con minor criminalita' e': "+min.toString());
+		
 		for(Distretto d: distretti) {
 			if(d.getnCrimini()>min.getnCrimini())
 				min=d;
 		}
+		
     	System.out.println("Il distretto con minor criminalita' e': "+min.toString());
 
 		return min;
@@ -137,10 +165,11 @@ public class Model {
 	
 	
 	public void simula(Distretto partenza, int nAgenti, int annoScelto, int meseScelto, int giornoScelto) {
+	
 		sim=new Simulatore();
 		
-		//Al mio simulatore devo passare il nodo di partenza, il nAgentiTotale inserito dall'utente e la data inserita
-		sim.init(grafo, partenza, nAgenti, annoScelto, meseScelto, giornoScelto);
+		//Al mio simulatore devo passare il nodo di partenza, il nAgentiTotale inserito dall'utente e la lista di Event nel giorno scelto
+		sim.init(grafo, partenza, nAgenti, idMapDistretti, mappaVicini,  annoScelto, meseScelto, giornoScelto, dao.getEventiGiorno(annoScelto, meseScelto, giornoScelto));
 		
 		sim.run();		
 	}
